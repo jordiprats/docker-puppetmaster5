@@ -4,11 +4,11 @@ MAINTAINER Jordi Prats
 # TODO
 # http://label-schema.org/rc1/#build-time-labels
 LABEL org.label-schema.vendor="" \
-      org.label-schema.url="https://github.com/NTTCom-MS" \
+      org.label-schema.url="https://github.com/SaltaIT" \
       org.label-schema.name="puppetdb" \
       org.label-schema.license="" \
       org.label-schema.version="5.5.6"\
-      org.label-schema.vcs-url="https://github.com/NTTCom-MS/docker-puppetmaster5" \
+      org.label-schema.vcs-url="https://github.com/SaltaIT/docker-puppetmaster5" \
       org.label-schema.vcs-ref="" \
       org.label-schema.build-date="2019-08-19T16:00:00.52Z" \
       org.label-schema.schema-version="1.0"
@@ -51,8 +51,8 @@ RUN /bin/bash /opt/puppet-masterless/setup.sh
 # postgres install
 #
 
-# https://github.com/NTTCom-MS/eyp-postgresql
-RUN /opt/puppet-masterless/localpuppetmaster.sh -d /tmp/postgres -r https://github.com/NTTCom-MS/eyp-postgresql
+# https://github.com/SaltaIT/eyp-postgresql
+RUN /opt/puppet-masterless/localpuppetmaster.sh -d /tmp/postgres -r https://github.com/SaltaIT/eyp-postgresql
 COPY postgres.pp /usr/local/src/postgres.pp
 
 #
