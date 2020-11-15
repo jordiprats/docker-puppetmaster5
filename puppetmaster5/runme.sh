@@ -114,8 +114,17 @@ then
         git push origin master
       fi
 
-      # autocommit watcher
-      /opt/utils/autocommit/autocommit.sh -r /etc/puppetlabs/puppet/.repo/ssl-repo -p &
+      # enable autocommit
+      touch /etc/puppetlabs/puppet/.repo/ssl-repo/.autocommit.enabled
+
+      chown puppet. /etc/puppetlabs/puppet/.repo/ssl-repo -R
+    else
+      # repo ssl clonat no esta buitl, no regenerem CA
+      mv /etc/puppetlabs/puppet/ssl /etc/puppetlabs/puppet/ssl.$(date +%Y%m%d%H%M%s)
+      sed "s@\\bcertname[ ]*=.*\$@certname=${EYP_PUPPETFQDN}@" -i /etc/puppetlabs/puppet/puppet.conf
+      chmod 0771 /etc/puppetlabs/puppet/.repo/ssl-repo
+      chown puppet. /etc/puppetlabs/puppet/.repo/ssl-repo -R
+      ln -s /etc/puppetlabs/puppet/.repo/ssl-repo /etc/puppetlabs/puppet/ssl
     fi
   else
     grep -Eo "certname=${EYP_PUPPETFQDN}\b" /etc/puppetlabs/puppet/puppet.conf > /dev/null 2>&1
@@ -130,6 +139,7 @@ else
   mv /etc/puppetlabs/puppet/ssl /etc/puppetlabs/puppet/ssl.$(date +%Y%m%d%H%M%s)
   sed "s@\\bcertname[ ]*=.*\$@certname=${EYP_PUPPETFQDN}@" -i /etc/puppetlabs/puppet/puppet.conf
   chmod 0771 /etc/puppetlabs/puppet/.repo/ssl-repo
+  chown puppet. /etc/puppetlabs/puppet/.repo/ssl-repo -R
   ln -s /etc/puppetlabs/puppet/.repo/ssl-repo /etc/puppetlabs/puppet/ssl
 fi
 
@@ -177,6 +187,14 @@ then
       - ChG
       - CHg
       - CHG
+      - PRJ
+      - PRj
+      - PrJ
+      - Prj
+      - pRJ
+      - pRj
+      - prJ
+      - prj
 EOF
   /usr/local/bin/updatepuppet.sh
 fi
@@ -192,8 +210,4 @@ then
 EOF
 fi
 
-# ps auxf | grep puppetserver | grep java | wc -l
-if [ "$(ps auxf | grep puppetserver | grep java | wc -l)" -ne 1 ];
-then
-  /opt/puppetlabs/server/apps/puppetserver/bin/puppetserver foreground
-fi
+exec /usr/bin/supervisord -c /etc/supervisord.conf -n
